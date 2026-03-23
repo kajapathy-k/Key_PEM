@@ -1,0 +1,29 @@
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    daemon
+    maxconn 2048
+
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+
+frontend http_front
+    bind *:80
+    mode http
+    default_backend k8s_backend
+
+backend k8s_backend
+    mode http
+    balance roundrobin
+
+    http-request set-header Host localhost
+    http-request set-header X-Forwarded-Proto http
+
+    server worker1 10.0.4.167:32068
+    server worker2 10.0.4.93:32068
