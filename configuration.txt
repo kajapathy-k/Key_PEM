@@ -1,0 +1,19 @@
+global
+    log /dev/log local0
+    daemon
+    maxconn 2048
+ 
+defaults
+    log global
+    mode tcp
+    option tcplog
+    timeout connect 5s
+    timeout client 50s
+    timeout server 50s
+ 
+frontend k8s_frontend
+    bind *:80
+    default_backend k8s_backend
+ 
+backend k8s_backend
+    balance roundrobi
